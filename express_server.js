@@ -14,13 +14,15 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase};
+  const templateVars = { urls: urlDatabase}; // When sending variables to an EJS template, we need to send them inside an object, even if we are only sending one variable.
   res.render('urls_index', templateVars);
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
+app.get('/urls/:id', (req, res) => {
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  console.log(req);
+  res.render('urls_show', templateVars);
+  });
 
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
@@ -28,4 +30,8 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });
