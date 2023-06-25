@@ -27,6 +27,7 @@ app.get('/', (req, res) => {
   res.send('Hello!');
 });
 
+// Create
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   let longURL = req.body.longURL;
@@ -36,6 +37,13 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Delete
+app.post('/urls/:id/delete', (req, res) => {
+  delete urlDatabase[req.params.id]
+  res.redirect('/urls');
+})
+
+// Read
 app.get('/urls', (req, res) => {
   const templateVars = { urls: urlDatabase }; // When sending variables to an EJS template, we need to send them inside an object, even if we are only sending one variable.
   res.render('urls_index', templateVars);
