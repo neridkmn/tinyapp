@@ -83,6 +83,9 @@ app.get('/hello', (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+
+// AUTHENTICATION
+
 // /login 
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
@@ -93,6 +96,11 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
+});
+
+// Registeration page
+app.get('/register', (req, res) => {
+  res.render('registration');
 });
 
 
