@@ -11,7 +11,7 @@ function generateRandomString() {
 };
 
 const express = require('express');
-const cookieParser = require('cookie-parser'); 
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -118,16 +118,32 @@ app.post('/logout', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('registration');
 });
+function findUserByEmail(email) {
+  for (const item in users) {
+    if (users[item].email === email) {
+      return users[item];
+    }
+  }
+  return null;
+};
 
 app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  if (email === '' || password === '') {
+    res.status(400).send('Email or password cannot be empty');
+  }
+  const user = findUserByEmail(email);
+  if (user) {
+    res.status(400).send('User already exists');
+  }
+
   const id = generateRandomString();
   users[id] = {
     id,
     email,
     password
-  }
+  };
   res.cookie('user_id', id);
   res.redirect('/urls');
 });
