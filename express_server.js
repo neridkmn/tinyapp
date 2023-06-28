@@ -67,7 +67,8 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = { user: users[req.cookies["user_id"]] };
+  res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:id', (req, res) => {
@@ -104,19 +105,34 @@ app.get('/hello', (req, res) => {
 
 // /login 
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = findUserByEmail(email);
+
+  if (!user) {
+    res.status(403).send('This user does not exist.')
+  }
+
+  if (user.password !== password) {
+    res.status(403).send('Password does not match.')
+  }
+
+  res.cookie('user_id', user.id);
   res.redirect('/urls');
+  
 });
 
 // logout
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
-  res.redirect('/urls');
+  res.clearCookie('user_id');
+  res.redirect('/login');
 });
 
 // Registeration page
 app.get('/register', (req, res) => {
-  res.render('registration');
+  const templateVars = { user: users[req.cookies["user_id"]] };
+  res.render('registration', templateVars);
 });
 function findUserByEmail(email) {
   for (const item in users) {
@@ -149,7 +165,8 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  const templateVars = { user: users[req.cookies["user_id"]] };
+  res.render('login', templateVars);
 });
 
 
