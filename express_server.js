@@ -22,8 +22,10 @@ function urlsForUser(id) {
 
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
+
 
 app.set('view engine', 'ejs');
 
@@ -71,7 +73,7 @@ app.get('/', (req, res) => {
 // Create
 app.post("/urls", (req, res) => {
   if (!req.cookies["user_id"]) {
-    return res.send('Only logged in users can shorten URLs.')
+    return res.send('Only logged in users can shorten URLs.');
   }
   let longURL = req.body.longURL;
   const shortURL = generateRandomString();
@@ -82,14 +84,14 @@ app.post("/urls", (req, res) => {
 // Delete
 app.post('/urls/:id/delete', (req, res) => {
   if (!Object.keys(urlDatabase).includes(req.params.id)) {
-    return res.send('This url does not exist.')
+    return res.send('This url does not exist.');
   }
 
   if (!req.cookies["user_id"]) {
-    return res.send('Please log in first.')
+    return res.send('Please log in first.');
   }
   if (urlDatabase[req.params.id].userID !== req.cookies["user_id"]) {
-    return res.send('You do not have permission to delete this URL.')
+    return res.send('You do not have permission to delete this URL.');
   }
 
   delete urlDatabase[req.params.id];
@@ -99,7 +101,7 @@ app.post('/urls/:id/delete', (req, res) => {
 // Read
 app.get('/urls', (req, res) => {
   if (!req.cookies["user_id"]) {
-    return res.send('Please log in or register first')
+    return res.send('Please log in or register first');
   }
   const templateVars = { urls: urlsForUser(req.cookies["user_id"]), user: users[req.cookies["user_id"]] };
   res.render('urls_index', templateVars);
@@ -119,7 +121,7 @@ app.get('/urls/:id', (req, res) => {
   }
 
   if (!Object.keys(urlDatabase).includes(req.params.id)) {
-    return res.send('This URL does not exist.')
+    return res.send('This URL does not exist.');
   }
 
   if (req.cookies["user_id"] !== urlDatabase[req.params.id].userID) {
@@ -133,10 +135,10 @@ app.get('/urls/:id', (req, res) => {
 //UPDATE
 app.post('/urls/:id', (req, res) => {
   if (!Object.keys(urlDatabase).includes(req.params.id)) {
-    return res.send('This URL does not exist.')
+    return res.send('This URL does not exist.');
   }
   if (!req.cookies["user_id"]) {
-    return res.send("Please log in first.")
+    return res.send("Please log in first.");
   }
 
   if (req.cookies["user_id"] !== urlDatabase[req.params.id].userID) {
@@ -178,16 +180,16 @@ app.post('/login', (req, res) => {
   const user = findUserByEmail(email);
 
   if (!user) {
-    res.status(403).send('This user does not exist.')
+    res.status(403).send('This user does not exist.');
   }
 
-  if (user.password !== password) {
-    res.status(403).send('Password does not match.')
+  if (!bcrypt.compareSync(password, user.hashedPassword)) {
+    res.status(403).send('Password does not match.');
   }
 
   res.cookie('user_id', user.id);
   res.redirect('/urls');
-  
+
 });
 
 // logout
@@ -225,10 +227,11 @@ app.post('/register', (req, res) => {
   }
 
   const id = generateRandomString();
+  const hashedPassword = bcrypt.hashSync(password, 10);
   users[id] = {
     id,
     email,
-    password
+    hashedPassword
   };
   res.cookie('user_id', id);
   res.redirect('/urls');
