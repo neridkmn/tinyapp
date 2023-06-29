@@ -48,6 +48,9 @@ app.get('/', (req, res) => {
 
 // Create
 app.post("/urls", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.send('Only logged in users can shorten URLs.')
+  }
   let longURL = req.body.longURL;
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
@@ -67,6 +70,9 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.redirect('/login');
+  }
   const templateVars = { user: users[req.cookies["user_id"]] };
   res.render('urls_new', templateVars);
 });
@@ -84,6 +90,9 @@ app.post('/urls/:id', (req, res) => {
 
 app.get('/u/:id', (req, res) => {
   const shortURL = req.params.id;
+  if (!Object.keys(urlDatabase).includes(shortURL)) {
+    res.send('URL does not exist.')
+  }
   const longURL = urlDatabase[shortURL];
   if (!longURL) {
     res.status(404).send("Not found");
@@ -131,6 +140,9 @@ app.post('/logout', (req, res) => {
 
 // Registeration page
 app.get('/register', (req, res) => {
+  if (req.cookies["user_id"]) {
+    res.redirect('/urls');
+  }
   const templateVars = { user: users[req.cookies["user_id"]] };
   res.render('registration', templateVars);
 });
@@ -165,8 +177,12 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  if (req.cookies["user_id"]) {
+    res.redirect('/urls');
+  }
   const templateVars = { user: users[req.cookies["user_id"]] };
   res.render('login', templateVars);
+
 });
 
 
