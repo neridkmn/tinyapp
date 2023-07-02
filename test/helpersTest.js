@@ -1,7 +1,7 @@
 const chai = require('chai');
 const assert = chai.expect;
 
-const { findUserByEmail } = require('../helpers.js');
+const { findUserByEmail, generateRandomString, urlsForUser } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -14,6 +14,17 @@ const testUsers = {
     email: "user2@example.com",
     password: "dishwasher-funk"
   }
+};
+
+const testUrlDatabase = {
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "12dg4t",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 describe('findUserByEmail', function() {
@@ -30,5 +41,25 @@ describe('findUserByEmail', function() {
   it('should return undefined if the user does not exist', function() {
     const user = findUserByEmail('a@a.com', testUsers);
     assert(user === undefined).to.be.true;
+  });
+});
+
+describe('generateRandomString', () => {
+  it('should return a string with a length of 6', () => {
+    const randomString = generateRandomString();
+    assert(randomString.length === 6).to.be.true;
+    assert(typeof randomString === 'string').to.be.true;
+  });
+});
+
+describe('urlsForUser', () => {
+  it('shoul return urls where the userID of the url matches the given id', () => {
+    const urls = urlsForUser('12dg4t', testUrlDatabase);
+    assert(urls.b6UTxQ.longURL === "https://www.tsn.ca").to.be.true;
+  });
+
+  it('should return an empty object if there is no match', () => {
+    const urls = urlsForUser('12344t', testUrlDatabase);
+    assert(urls).to.be.empty;
   });
 });
