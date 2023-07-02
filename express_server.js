@@ -20,6 +20,8 @@ function urlsForUser(id) {
   return urls;
 };
 
+
+const { findUserByEmail } = require('./helpers'); // Object destructuring
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
@@ -178,7 +180,7 @@ app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const user = findUserByEmail(email);
+  const user = findUserByEmail(email, users);
 
   if (!user) {
     res.status(403).send('This user does not exist.');
@@ -207,14 +209,7 @@ app.get('/register', (req, res) => {
   const templateVars = { user: users[req.session.user_id] };
   res.render('registration', templateVars);
 });
-function findUserByEmail(email) {
-  for (const item in users) {
-    if (users[item].email === email) {
-      return users[item];
-    }
-  }
-  return null;
-};
+
 
 app.post('/register', (req, res) => {
   const email = req.body.email;
@@ -222,7 +217,7 @@ app.post('/register', (req, res) => {
   if (email === '' || password === '') {
     res.status(400).send('Email or password cannot be empty');
   }
-  const user = findUserByEmail(email);
+  const user = findUserByEmail(email, users);
   if (user) {
     res.status(400).send('User already exists');
   }
@@ -237,6 +232,7 @@ app.post('/register', (req, res) => {
   
   req.session.user_id = id;
   res.redirect('/urls');
+
 });
 
 app.get('/login', (req, res) => {
