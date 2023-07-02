@@ -6,7 +6,16 @@ TinyApp is a full-stack web application built with Node and Express that allows 
 
 ### URLS page
 !["urls-page"](https://github.com/neridkmn/tinyapp/blob/main/docs/urls-page.png?raw=true)
-!["screenshot description"](#)
+
+### Edit page
+!["edit-page"](https://github.com/neridkmn/tinyapp/blob/main/docs/edit-page.png?raw=true)
+
+### Login page
+!["login-page"](https://github.com/neridkmn/tinyapp/blob/main/docs/login-page.png?raw=true)
+
+### Register page
+!["register-page"](https://github.com/neridkmn/tinyapp/blob/main/docs/register-page.png?raw=true)
+
 
 ## Dependencies
 
@@ -24,6 +33,5 @@ TinyApp is a full-stack web application built with Node and Express that allows 
 ### Project Outcome
 Building a simple multipage app:
 
-with authentication protection
-that reacts appropriately to the user's logged-in state,
-and permits the user to create, read, update, and delete (CRUD) a simple entity (e.g. blog posts, URL shortener).
+- With authentication protection that reacts appropriately to the user's logged-in state,
+- Permits the user to create, read, update, and delete (CRUD) a shortened URL.
