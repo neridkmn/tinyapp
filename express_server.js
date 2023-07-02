@@ -1,27 +1,5 @@
-function generateRandomString() {
-  let shortUrlArray = [];
-  let alphanumericCharacters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "w", "x", "y", "z", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-  for (let i = 0; i < 6; i++) {
-    let randomIndex = Math.floor(Math.random() * alphanumericCharacters.length);
-    shortUrlArray.push(alphanumericCharacters[randomIndex]);
-  }
-
-  return shortUrlArray.join("");
-};
-
-function urlsForUser(id) {
-  const urls = {};
-  for (const item in urlDatabase) {
-    if (urlDatabase[item].userID === id) {
-      urls[item] = urlDatabase[item];
-    }
-  }
-  return urls;
-};
-
-
-const { findUserByEmail } = require('./helpers'); // Object destructuring
+const { findUserByEmail, generateRandomString, urlsForUser } = require('./helpers'); // Object destructuring
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
@@ -106,7 +84,7 @@ app.get('/urls', (req, res) => {
   if (!req.session.user_id) {
     return res.send('Please log in or register first');
   }
-  const templateVars = { urls: urlsForUser(req.session.user_id), user: users[req.session.user_id] };
+  const templateVars = { urls: urlsForUser(req.session.user_id, urlDatabase), user: users[req.session.user_id] };
   res.render('urls_index', templateVars);
 });
 
